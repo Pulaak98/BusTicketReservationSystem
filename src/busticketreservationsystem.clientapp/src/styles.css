@@ -1,0 +1,61 @@
+/* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background-image: url('./Assest/Bus.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+.bg-overlay {
+  background-color: rgba(0, 0, 0, 0.8); /* semi-transparent black */
+  min-height: 82vh;
+  padding: 0px;
+}
+.custom-heading {
+  color: #f9f7fd; /* Soft blue — clean and modern */
+  margin: auto; /* Adds extra spacing below */
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #2ecc71; /* Deep slate blue */
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.3px;
+  text-transform: capitalize;
+}
+
+
+/* Individual status styles */
+
+
+
+.selected {
+  /* background-color: #cce5ff; */
+  color: #f7f8f7;
+  /* border: 1px solid #b8daff; */
+  font-size: large;
+  text-transform: capitalize;
+}
+.white-text {
+  color: white;
+}
+
+.orange-text{
+    color: #e67e22;
+}
+
+.puprple-text{
+    color: #8e44ad;
+}

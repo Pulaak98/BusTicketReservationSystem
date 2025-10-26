@@ -1,0 +1,11 @@
+button {
+  font-weight: bold;
+}
+
+.container {
+  padding-bottom: 40px;
+}
+
+.border-end {
+  border-right: 1px solid #ccc;
+}

@@ -1,0 +1,65 @@
+<div class="container mt-4">
+  <h2 class="mb-3 custom-heading">Search Buses</h2>
+
+  <form class="row g-3" (ngSubmit)="onSearch()">
+    <div class="col-md-4">
+      <select [(ngModel)]="from" name="from" class="form-control" required>
+        <option value="" disabled selected>Select origin</option>
+        <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+      </select>
+    </div>
+    <div class="col-md-4">
+      <select [(ngModel)]="to" name="to" class="form-control" required>
+        <option value="" disabled selected>Select destination</option>
+        <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <input
+        [(ngModel)]="date"
+        name="date"
+        type="date"
+        class="form-control"
+        required
+        [min]="minDate"
+      />
+    </div>
+    <div class="col-md-1">
+      <button type="submit" class="btn btn-primary w-100">Search</button>
+    </div>
+  </form>
+
+  <table *ngIf="results.length > 0" class="table table-striped mt-4">
+    <thead>
+      <tr>
+        <th>Bus</th>
+        <th>Company</th>
+        <th>Journey Date</th>
+        <th>Start</th>
+        <th>Arrival</th>
+        <th>Seats Left</th>
+        <th>Price</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let bus of results">
+        <td>{{ bus.busName }}</td>
+        <td>{{ bus.companyName }}</td>
+        <td>{{ bus.journeyDate | date : 'yyyy-MM-dd' }}</td>
+        <td>{{ bus.startTime | date : 'shortTime' }}</td>
+        <td>{{ bus.arrivalTime | date : 'shortTime' }}</td>
+        <td>{{ bus.seatsLeft }}</td>
+        <td>{{ bus.price }}</td>
+        <td>
+          <a [routerLink]="['/seatplan', bus.busScheduleId]" class="btn btn-sm btn-outline-primary">
+            View Seats
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="searched && results.length === 0" class="alert alert-warning mt-4">
+    No buses available for the selected route and date.
+  </div>
+</div>

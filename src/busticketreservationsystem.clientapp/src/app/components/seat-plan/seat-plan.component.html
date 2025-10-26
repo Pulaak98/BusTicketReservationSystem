@@ -1,0 +1,174 @@
+<div class="container mt-4">
+  <div class="row">
+    <!-- Left Column: Seat Layout -->
+    <div class="col-md-8">
+      <h4 class="mb-4 text-center form-label">{{ busName }} - {{ companyName }}</h4>
+
+      <!-- Legend -->
+      <div class="d-flex justify-content-center mb-4 gap-4">
+        <div class="d-flex align-items-center gap-2">
+          <button
+            class="btn btn-outline-success p-0"
+            style="width: 30px; height: 30px"
+            disabled
+          ></button>
+          <span class="selected">Available</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-warning p-0" style="width: 30px; height: 30px" disabled></button>
+          <span class="selected">Booked</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-danger p-0" style="width: 30px; height: 30px" disabled></button>
+          <span class="selected">Sold</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-success p-0" style="width: 30px; height: 30px" disabled></button>
+          <span class="selected">Selected</span>
+        </div>
+      </div>
+
+      <div
+        *ngFor="let row of getSeatLayout()"
+        class="d-flex align-items-center mb-2"
+        style="gap: 12px; justify-content: center"
+      >
+        <!-- Left side seats -->
+        <div class="d-flex" style="gap: 6px">
+          <button
+            *ngFor="let seat of row.slice(0, 2)"
+            [ngClass]="getSeatClass(seat)"
+            (click)="toggleSeat(seat)"
+            class="btn p-0"
+            style="width: 50px; height: 50px"
+          >
+            {{ seat.seatNumber }}
+          </button>
+        </div>
+
+        <!-- Aisle (narrow, fixed) -->
+        <div style="width: 20px"></div>
+
+        <!-- Right side seats -->
+        <div class="d-flex" style="gap: 6px">
+          <button
+            *ngFor="let seat of row.slice(2, 4)"
+            [ngClass]="getSeatClass(seat)"
+            (click)="toggleSeat(seat)"
+            class="btn p-0"
+            style="width: 50px; height: 50px"
+          >
+            {{ seat.seatNumber }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Selected Seats + Actions -->
+    <div class="col-md-4 ps-md-4">
+      <!-- Cancel Button -->
+      <button class="btn btn-outline-danger mt-3 w-100" (click)="showCancelForm = true">
+        Cancel Ticket
+      </button>
+
+      <!-- Conditional Cancellation Form -->
+      <div *ngIf="showCancelForm" class="mt-3 border p-3 rounded">
+        <label class="form-label">Ticket ID</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="ticketId"
+          placeholder="Paste ticket ID to cancel"
+        />
+        <div class="d-flex justify-content-end gap-2 mt-2">
+          <button class="btn btn-secondary" (click)="showCancelForm = false">Close</button>
+          <button class="btn btn-danger" [disabled]="!ticketId" (click)="cancelTicket()">
+            Confirm Cancel
+          </button>
+        </div>
+      </div>
+
+      <!-- Selected Seats Section -->
+      <div class="mt-4">
+        <h5 class="mb-3 selected orange-text">Selected Seats</h5>
+        <div *ngIf="selectedSeats.length === 0" class="white-text ">None selected</div>
+        <ul *ngIf="selectedSeats.length > 0" class="list-unstyled">
+          <li *ngFor="let seat of selectedSeats" class="mb-1">
+            <span class="badge bg-success fs-5">{{ seat.number }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Passenger Info -->
+      <div class="mt-4">
+        <h6 class="selected orange-text">Passenger Details</h6>
+        <div class="mb-2">
+          <label class="form-label">Name</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="passengerName"
+            placeholder="Enter passenger name"
+          />
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Mobile Number</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="mobileNumber"
+            placeholder="Enter mobile number"
+          />
+          <div *ngIf="mobileNumber && !isValidMobile(mobileNumber)" class="text-danger small mt-1">
+            Invalid mobile number. Must be 11 digits starting with 017, 018, 016, 019, 015, or 013.
+          </div>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Boarding Point</label>
+          <select class="form-select" [(ngModel)]="boardingPoint">
+            <option *ngFor="let point of boardingPoints" [value]="point">{{ point }}</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Dropping Point</label>
+          <select class="form-select" [(ngModel)]="droppingPoint">
+            <option *ngFor="let point of droppingPoints" [value]="point">{{ point }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Book Now Button -->
+      <div class="d-flex gap-3 mt-3">
+        <button
+          class="btn btn-primary flex-fill"
+          [disabled]="
+            selectedSeats.length === 0 ||
+            !passengerName ||
+            !mobileNumber ||
+            !isValidMobile(mobileNumber) ||
+            !boardingPoint ||
+            !droppingPoint
+          "
+          (click)="bookNow()"
+        >
+          Book Now
+        </button>
+
+        <button
+          class="btn btn-success flex-fill"
+          [disabled]="
+            selectedSeats.length === 0 ||
+            !passengerName ||
+            !mobileNumber ||
+            !isValidMobile(mobileNumber) ||
+            !boardingPoint ||
+            !droppingPoint
+          "
+          (click)="buyNow()"
+        >
+          Buy Now
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
