@@ -37,6 +37,7 @@ namespace BusTicketReservationSystem.Application.Services
         public async Task<SeatPlanDto> GetSeatPlanAsync(Guid busScheduleId)
         {
             var schedule = await _schedules.GetByIdAsync(busScheduleId);
+
             if (schedule is null)
                 return new SeatPlanDto { BusScheduleId = busScheduleId };
 
@@ -98,12 +99,12 @@ namespace BusTicketReservationSystem.Application.Services
 
                     if (existingTicket != null && existingTicket.Status == TicketStatus.Cancelled)
                     {
-                        // Reuse the canceled ticket
+                       
                         existingTicket.Status = input.Action.ToLower() == "buy" ? TicketStatus.Sold : TicketStatus.Booked;
                         existingTicket.PassengerId = passenger.Id;
                         existingTicket.BoardingPoint = input.BoardingPoint;
                         existingTicket.DroppingPoint = input.DroppingPoint;
-                        // No need to add — it's already tracked
+                     
                     }
                     else
                     {

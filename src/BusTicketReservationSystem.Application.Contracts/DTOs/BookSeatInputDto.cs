@@ -14,6 +14,6 @@ namespace BusTicketReservationSystem.Application.Contracts.DTOs
         public string PassengerMobile { get; set; } = string.Empty;
         public string BoardingPoint { get; set; } = string.Empty;
         public string DroppingPoint { get; set; } = string.Empty;
-        public string Action { get; set; } = "book"; // "book" or "buy"
+        public string Action { get; set; } = "book"; 
     }
 }

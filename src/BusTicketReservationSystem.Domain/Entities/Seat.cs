@@ -19,7 +19,7 @@ namespace BusTicketReservationSystem.Domain.Entities
         public Bus Bus { get; set; }
         public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
 
-        private Seat() { } // EF needs this
+        private Seat() { }
 
         public Seat(SeatPosition position)
         {

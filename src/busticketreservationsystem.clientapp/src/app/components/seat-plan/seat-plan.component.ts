@@ -14,7 +14,6 @@ import { ApiService } from '../../services/api';
 export class SeatPlanComponent implements OnInit {
   scheduleId!: string;
   seats: any[] = [];
-  // selectedSeats: string[] = [];
   selectedSeats: { id: string; number: string }[] = [];
   busName = '';
   companyName = '';
@@ -34,7 +33,6 @@ export class SeatPlanComponent implements OnInit {
     this.api.getSeatPlan(this.scheduleId).subscribe((res) => {
       this.busName = res.busName;
       this.companyName = res.companyName;
-      // this.seats = res.seats;
       this.seats = res.seats.sort((a: any, b: any) => {
   const numA = parseInt(a.seatNumber.replace(/\D/g, ''));
   const numB = parseInt(b.seatNumber.replace(/\D/g, ''));
@@ -52,16 +50,6 @@ export class SeatPlanComponent implements OnInit {
     });
   }
 
-  // // toggleSeat(seat: any) {
-  //   if (seat.status !== 'Available') return;
-
-  //   const index = this.selectedSeats.indexOf(seat.seatId);
-  //   if (index > -1) {
-  //     this.selectedSeats.splice(index, 1);
-  //   } else {
-  //     this.selectedSeats.push(seat.seatId);
-  //   }
-  // }
   toggleSeat(seat: any) {
     if (seat.status !== 'Available') return;
 
@@ -73,7 +61,7 @@ export class SeatPlanComponent implements OnInit {
     }
   }
 
-  //
+
   isSelected(seat: any): boolean {
     return this.selectedSeats.some((s) => s.id === seat.seatId);
   }
@@ -100,14 +88,13 @@ export class SeatPlanComponent implements OnInit {
     if (this.selectedSeats.length === 0) return;
     console.log(this.selectedSeats);
     const bookingRequest = {
-      busScheduleId: this.scheduleId, // 👈 match backend property
-      // seatId: this.selectedSeats, // 👈 backend expects "seatId" array
+      busScheduleId: this.scheduleId,
       seatId: this.selectedSeats.map((s) => s.id),
       passengerName: this.passengerName,
-      passengerMobile: this.mobileNumber, // 👈 backend expects "passengerMobile"
+      passengerMobile: this.mobileNumber, 
       boardingPoint: this.boardingPoint,
       droppingPoint: this.droppingPoint,
-      action: 'Book', // 👈 backend requires an action string
+      action: 'Book',
     };
 
     this.api.bookSeats(bookingRequest).subscribe({
@@ -140,14 +127,13 @@ export class SeatPlanComponent implements OnInit {
     if (this.selectedSeats.length === 0) return;
     console.log(this.selectedSeats);
     const bookingRequest = {
-      busScheduleId: this.scheduleId, // 👈 match backend property
-      // seatId: this.selectedSeats, // 👈 backend expects "seatId" array
+      busScheduleId: this.scheduleId, 
       seatId: this.selectedSeats.map((s) => s.id),
       passengerName: this.passengerName,
-      passengerMobile: this.mobileNumber, // 👈 backend expects "passengerMobile"
+      passengerMobile: this.mobileNumber, 
       boardingPoint: this.boardingPoint,
       droppingPoint: this.droppingPoint,
-      action: 'Buy', // 👈 backend requires an action string
+      action: 'Buy',
     };
 
     this.api.buySeats(bookingRequest).subscribe({

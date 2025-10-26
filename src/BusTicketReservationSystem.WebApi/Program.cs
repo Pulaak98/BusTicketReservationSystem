@@ -35,7 +35,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
         policy => policy
-            .WithOrigins("http://localhost:4200")
+            .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
@@ -48,23 +48,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-//app.UseSpa(spa =>
-//{
-//    spa.Options.SourcePath = "busticketreservationsystem.clientapp";
-
-//    if (app.Environment.IsDevelopment())
-//    {
-//        spa.UseAngularCliServer(npmScript: "start");
-//    }
-//});
-
-//app.UseCors(policy =>
-//    policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
-//          .AllowAnyHeader()
-//          .AllowAnyMethod());
-
-
-
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAngular");
