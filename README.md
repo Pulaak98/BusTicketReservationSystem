@@ -136,7 +136,15 @@ BEGIN
   END LOOP;
 END $$;
 
-### 5. Run the Project
+### 5. Adjust API Link in Frontend
+   
+   - go to 'busticketreservationsystem.clientapp/src/app/services/api.ts'
+   - find line 6 and update the link with your api serving port
+  
+    private baseUrl = 'https://localhost:7196/api'; // adjust to your backend port
+
+
+### 6. Run the Project
 
    --   Press F5 or click Start Debugging
 
@@ -151,7 +159,7 @@ END $$;
         Open Angular app at http://localhost:4200
 
 
-### 6. Run Unit Tests
+### 7. Run Unit Tests
 
   -- Go to Test > Test Explorer
 
@@ -165,7 +173,7 @@ END $$;
         
         SearchServiceTests
 
-### 7. NuGet Package List
+### 8. NuGet Package List
 
    --   Backend NuGet Packages
     
