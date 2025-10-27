@@ -87,46 +87,11 @@ namespace BusTicketReservationSystem.Application.Services
 
                 var seats = await _seats.GetByIdsAsync(input.SeatId);
                 var bookedDtos = new List<SeatDto>();
-
-                //foreach (var seat in seats)
-                //{
-                //    var existingTicket = await _tickets.FindBySeatAndScheduleAsync(seat.Id, schedule.Id);
-
-                //    if (existingTicket != null && existingTicket.Status == TicketStatus.Cancelled)
-                //    {
-                //        existingTicket.Status = input.Action.ToLower() == "buy" ? TicketStatus.Sold : TicketStatus.Booked;
-                //        existingTicket.PassengerId = passenger.Id;
-                //        existingTicket.BoardingPoint = input.BoardingPoint;
-                //        existingTicket.DroppingPoint = input.DroppingPoint;
-                //    }
-                //    else
-                //    {
-                //        var ticket = new Ticket
-                //        {
-                //            Id = Guid.NewGuid(),
-                //            SeatId = seat.Id,
-                //            PassengerId = passenger.Id,
-                //            BusScheduleId = schedule.Id,
-                //            Status = input.Action.ToLower() == "buy" ? TicketStatus.Sold : TicketStatus.Booked,
-                //            BoardingPoint = input.BoardingPoint,
-                //            DroppingPoint = input.DroppingPoint
-                //        };
-                //        await _tickets.AddAsync(ticket);
-                //    }
-
-                //    bookedDtos.Add(new SeatDto
-                //    {
-                //        SeatId = seat.Id,
-                //        SeatNumber = seat.SeatNumber,
-                //        Row = seat.Row,
-                //        Status = input.Action.ToLower() == "buy" ? "Sold" : "Booked"
-                //    });
-                //}
                 foreach (var seat in seats)
                 {
                     var existingTicket = await _tickets.FindBySeatAndScheduleAsync(seat.Id, schedule.Id);
 
-                    // ✅ Prevent booking if already taken
+                 
                     if (existingTicket != null &&
                         (existingTicket.Status == TicketStatus.Booked || existingTicket.Status == TicketStatus.Sold))
                     {
