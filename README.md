@@ -69,37 +69,41 @@ this system enables users to search for buses, view seat layouts, and book or ca
 ### 4. For Seeding Demo Data Run These Scripts on Query Tool in pgAdmin4 
 
 -- Enable UUID generation
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+    CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- ROUTES: Dhaka to other cities (one-way only)
-INSERT INTO "Routes" ("Id", "FromCity", "ToCity", "DistanceKm", "BoardingPoint", "DroppingPoint") VALUES
-  (gen_random_uuid(), 'Dhaka', 'Rajshahi', 245, 'Gabtoli', 'Rajshahi Terminal'),
-  (gen_random_uuid(), 'Dhaka', 'Chattogram', 295, 'Gabtoli', 'Chattogram Terminal'),
-  (gen_random_uuid(), 'Dhaka', 'Sylhet', 240, 'Gabtoli', 'Sylhet Terminal'),
-  (gen_random_uuid(), 'Dhaka', 'Khulna', 270, 'Gabtoli', 'Khulna Terminal'),
-  (gen_random_uuid(), 'Dhaka', 'Barishal', 180, 'Gabtoli', 'Barishal Terminal'),
-  (gen_random_uuid(), 'Dhaka', 'Mymensingh', 120, 'Gabtoli', 'Mymensingh Terminal'),
-  (gen_random_uuid(), 'Dhaka', 'Sherpur', 150, 'Gabtoli', 'Sherpur Terminal');
+
+    INSERT INTO "Routes" ("Id", "FromCity", "ToCity", "DistanceKm", "BoardingPoint", "DroppingPoint") VALUES
+    (gen_random_uuid(), 'Dhaka', 'Rajshahi', 245, 'Gabtoli', 'Rajshahi Terminal'),
+    (gen_random_uuid(), 'Dhaka', 'Chattogram', 295, 'Gabtoli', 'Chattogram Terminal'),
+    (gen_random_uuid(), 'Dhaka', 'Sylhet', 240, 'Gabtoli', 'Sylhet Terminal'),
+    (gen_random_uuid(), 'Dhaka', 'Khulna', 270, 'Gabtoli', 'Khulna Terminal'),
+    (gen_random_uuid(), 'Dhaka', 'Barishal', 180, 'Gabtoli', 'Barishal Terminal'),
+    (gen_random_uuid(), 'Dhaka', 'Mymensingh', 120, 'Gabtoli', 'Mymensingh Terminal'),
+    (gen_random_uuid(), 'Dhaka', 'Sherpur', 150, 'Gabtoli', 'Sherpur Terminal');
 
 -- BUSES
-INSERT INTO "Buses" ("Id", "CompanyName", "BusName", "TotalSeats", "Price") VALUES
-  (gen_random_uuid(), 'GreenLine', 'GL Express 1', 40, 850),
-  (gen_random_uuid(), 'Shohag', 'Shohag Elite', 40, 900),
-  (gen_random_uuid(), 'Hanif', 'Hanif Classic', 40, 780);
+
+    INSERT INTO "Buses" ("Id", "CompanyName", "BusName", "TotalSeats", "Price") VALUES
+    (gen_random_uuid(), 'GreenLine', 'GL Express 1', 40, 850),
+    (gen_random_uuid(), 'Shohag', 'Shohag Elite', 40, 900),
+    (gen_random_uuid(), 'Hanif', 'Hanif Classic', 40, 780);
 
 -- BUS SCHEDULES: Each route × each bus × multiple dates
-DO $$
-DECLARE
-  route_rec RECORD;
-  bus_rec RECORD;
-  journey_date DATE;
-  journey_dates DATE[] := ARRAY[
+
+    DO $$
+    DECLARE
+    route_rec RECORD;
+    bus_rec RECORD;
+    journey_date DATE;
+    journey_dates DATE[] := ARRAY[
     DATE '2025-10-27',
     DATE '2025-10-28',
     DATE '2025-10-29'
-  ];
-BEGIN
-  FOR route_rec IN SELECT "Id" FROM "Routes" LOOP
+     ];
+    BEGIN
+    FOR route_rec IN SELECT "Id" FROM "Routes" LOOP
     FOR bus_rec IN SELECT "Id" FROM "Buses" LOOP
       FOREACH journey_date IN ARRAY journey_dates LOOP
         INSERT INTO "BusSchedules" ("Id", "BusId", "RouteId", "JourneyDate", "StartTime", "ArrivalTime")
@@ -113,16 +117,17 @@ BEGIN
         );
       END LOOP;
     END LOOP;
-  END LOOP;
-END $$;
+     END LOOP;
+    END $$;
 
 -- SEATS: 10 rows × 4 seats = 40 seats per bus
-DO $$
-DECLARE
-  bus_rec RECORD;
-  i INT;
-BEGIN
-  FOR bus_rec IN SELECT "Id" FROM "Buses" LOOP
+
+    DO $$
+    DECLARE
+    bus_rec RECORD;
+    i INT;
+    BEGIN
+    FOR bus_rec IN SELECT "Id" FROM "Buses" LOOP
     FOR i IN 1..40 LOOP
       INSERT INTO "Seats" ("Id", "BusId", "SeatNumber", "Row", "Status")
       VALUES (
@@ -133,8 +138,8 @@ BEGIN
         0
       );
     END LOOP;
-  END LOOP;
-END $$;
+    END LOOP;
+    END $$;
 
 ### 5. Adjust API Link in Frontend
    
