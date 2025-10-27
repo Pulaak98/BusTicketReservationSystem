@@ -34,10 +34,10 @@ export class SeatPlanComponent implements OnInit {
       this.busName = res.busName;
       this.companyName = res.companyName;
       this.seats = res.seats.sort((a: any, b: any) => {
-  const numA = parseInt(a.seatNumber.replace(/\D/g, ''));
-  const numB = parseInt(b.seatNumber.replace(/\D/g, ''));
-  return numA - numB;
-});
+        const numA = parseInt(a.seatNumber.replace(/\D/g, ''));
+        const numB = parseInt(b.seatNumber.replace(/\D/g, ''));
+        return numA - numB;
+      });
 
       if (res.boardingPoint) {
         this.boardingPoints = [res.boardingPoint];
@@ -60,7 +60,6 @@ export class SeatPlanComponent implements OnInit {
       this.selectedSeats.push({ id: seat.seatId, number: seat.seatNumber });
     }
   }
-
 
   isSelected(seat: any): boolean {
     return this.selectedSeats.some((s) => s.id === seat.seatId);
@@ -91,7 +90,7 @@ export class SeatPlanComponent implements OnInit {
       busScheduleId: this.scheduleId,
       seatId: this.selectedSeats.map((s) => s.id),
       passengerName: this.passengerName,
-      passengerMobile: this.mobileNumber, 
+      passengerMobile: this.mobileNumber,
       boardingPoint: this.boardingPoint,
       droppingPoint: this.droppingPoint,
       action: 'Book',
@@ -107,14 +106,13 @@ export class SeatPlanComponent implements OnInit {
         this.boardingPoint = '';
         this.droppingPoint = '';
 
-        // refresh seat plan so UI updates
         this.api.getSeatPlan(this.scheduleId).subscribe((updated) => {
+          this.seats = []; 
           this.seats = updated.seats.sort((a: any, b: any) => {
-  const numA = parseInt(a.seatNumber.replace(/\D/g, ''));
-  const numB = parseInt(b.seatNumber.replace(/\D/g, ''));
-  return numA - numB;
-});
-
+            const numA = parseInt(a.seatNumber.replace(/\D/g, ''));
+            const numB = parseInt(b.seatNumber.replace(/\D/g, ''));
+            return numA - numB;
+          });
         });
       },
       error: (err) => {
@@ -123,14 +121,16 @@ export class SeatPlanComponent implements OnInit {
       },
     });
   }
+
+  
   buyNow() {
     if (this.selectedSeats.length === 0) return;
     console.log(this.selectedSeats);
     const bookingRequest = {
-      busScheduleId: this.scheduleId, 
+      busScheduleId: this.scheduleId,
       seatId: this.selectedSeats.map((s) => s.id),
       passengerName: this.passengerName,
-      passengerMobile: this.mobileNumber, 
+      passengerMobile: this.mobileNumber,
       boardingPoint: this.boardingPoint,
       droppingPoint: this.droppingPoint,
       action: 'Buy',
@@ -146,14 +146,14 @@ export class SeatPlanComponent implements OnInit {
         this.boardingPoint = '';
         this.droppingPoint = '';
 
-        // refresh seat plan so UI updates
         this.api.getSeatPlan(this.scheduleId).subscribe((updated) => {
+          console.log('Updated seat plan:', updated.seats);
+          this.seats = []; // clear old seats
           this.seats = updated.seats.sort((a: any, b: any) => {
-  const numA = parseInt(a.seatNumber.replace(/\D/g, ''));
-  const numB = parseInt(b.seatNumber.replace(/\D/g, ''));
-  return numA - numB;
-});
-
+            const numA = parseInt(a.seatNumber.replace(/\D/g, ''));
+            const numB = parseInt(b.seatNumber.replace(/\D/g, ''));
+            return numA - numB;
+          });
         });
       },
       error: (err) => {
@@ -163,24 +163,23 @@ export class SeatPlanComponent implements OnInit {
     });
   }
   cancelTicket() {
-  this.api.cancelTicket({ ticketId: this.ticketId }).subscribe({
-    next: () => {
-      alert('Ticket cancelled.');
-      this.ticketId = '';
-      this.api.getSeatPlan(this.scheduleId).subscribe(updated => {
-        this.seats = updated.seats.sort((a: any, b: any) => {
-          const numA = parseInt(a.seatNumber.replace(/\D/g, ''));
-          const numB = parseInt(b.seatNumber.replace(/\D/g, ''));
-          return numA - numB;
+    this.api.cancelTicket({ ticketId: this.ticketId }).subscribe({
+      next: () => {
+        alert('Ticket cancelled.');
+        this.ticketId = '';
+        this.api.getSeatPlan(this.scheduleId).subscribe((updated) => {
+          this.seats = updated.seats.sort((a: any, b: any) => {
+            const numA = parseInt(a.seatNumber.replace(/\D/g, ''));
+            const numB = parseInt(b.seatNumber.replace(/\D/g, ''));
+            return numA - numB;
+          });
         });
-      });
-    },
-    error: () => alert('Cancellation failed.')
-  });
-}
-isValidMobile(mobile: string): boolean {
-  const pattern = /^(017|018|016|019|015|013)\d{8}$/;
-  return pattern.test(mobile);
-}
-
+      },
+      error: () => alert('Cancellation failed.'),
+    });
+  }
+  isValidMobile(mobile: string): boolean {
+    const pattern = /^(017|018|016|019|015|013)\d{8}$/;
+    return pattern.test(mobile);
+  }
 }

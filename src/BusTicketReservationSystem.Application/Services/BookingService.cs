@@ -37,15 +37,14 @@ namespace BusTicketReservationSystem.Application.Services
         public async Task<SeatPlanDto> GetSeatPlanAsync(Guid busScheduleId)
         {
             var schedule = await _schedules.GetByIdAsync(busScheduleId);
-
             if (schedule is null)
                 return new SeatPlanDto { BusScheduleId = busScheduleId };
 
             var busSeats = await _seats.GetByBusIdAsync(schedule.BusId);
-            var bookedSeats = schedule.Tickets
-                                .Where(t => t.Status == TicketStatus.Booked || t.Status == TicketStatus.Sold)
-                                .Select(t => t.SeatId)
-                                .ToHashSet();
+
+            var seatStatusMap = schedule.Tickets
+                .Where(t => t.Status == TicketStatus.Booked || t.Status == TicketStatus.Sold)
+                .ToDictionary(t => t.SeatId, t => t.Status);
 
             return new SeatPlanDto
             {
@@ -59,11 +58,13 @@ namespace BusTicketReservationSystem.Application.Services
                     SeatId = s.Id,
                     SeatNumber = s.SeatNumber,
                     Row = s.Row,
-                    Status = bookedSeats.Contains(s.Id) ? "Booked" : "Available"
+                    Status = seatStatusMap.TryGetValue(s.Id, out var status)
+                        ? status == TicketStatus.Sold ? "Sold" : "Booked"
+                        : "Available"
                 }).ToList()
-
             };
         }
+
 
         public async Task<BookSeatResultDto> BookSeatAsync(BookSeatInputDto input)
         {
@@ -87,29 +88,61 @@ namespace BusTicketReservationSystem.Application.Services
                 var seats = await _seats.GetByIdsAsync(input.SeatId);
                 var bookedDtos = new List<SeatDto>();
 
+                //foreach (var seat in seats)
+                //{
+                //    var existingTicket = await _tickets.FindBySeatAndScheduleAsync(seat.Id, schedule.Id);
+
+                //    if (existingTicket != null && existingTicket.Status == TicketStatus.Cancelled)
+                //    {
+                //        existingTicket.Status = input.Action.ToLower() == "buy" ? TicketStatus.Sold : TicketStatus.Booked;
+                //        existingTicket.PassengerId = passenger.Id;
+                //        existingTicket.BoardingPoint = input.BoardingPoint;
+                //        existingTicket.DroppingPoint = input.DroppingPoint;
+                //    }
+                //    else
+                //    {
+                //        var ticket = new Ticket
+                //        {
+                //            Id = Guid.NewGuid(),
+                //            SeatId = seat.Id,
+                //            PassengerId = passenger.Id,
+                //            BusScheduleId = schedule.Id,
+                //            Status = input.Action.ToLower() == "buy" ? TicketStatus.Sold : TicketStatus.Booked,
+                //            BoardingPoint = input.BoardingPoint,
+                //            DroppingPoint = input.DroppingPoint
+                //        };
+                //        await _tickets.AddAsync(ticket);
+                //    }
+
+                //    bookedDtos.Add(new SeatDto
+                //    {
+                //        SeatId = seat.Id,
+                //        SeatNumber = seat.SeatNumber,
+                //        Row = seat.Row,
+                //        Status = input.Action.ToLower() == "buy" ? "Sold" : "Booked"
+                //    });
+                //}
                 foreach (var seat in seats)
                 {
-                    SeatStateService.EnsureCanBook(seat);
-
-                    if (input.Action.ToLower() == "buy")
-                    {
-                        SeatStateService.Sell(seat);
-                    }
-                    else
-                    {
-                        SeatStateService.Book(seat);
-                    }
-
                     var existingTicket = await _tickets.FindBySeatAndScheduleAsync(seat.Id, schedule.Id);
+
+                    // ✅ Prevent booking if already taken
+                    if (existingTicket != null &&
+                        (existingTicket.Status == TicketStatus.Booked || existingTicket.Status == TicketStatus.Sold))
+                    {
+                        return new BookSeatResultDto
+                        {
+                            Success = false,
+                            Message = $"Seat {seat.SeatNumber} is already booked or sold."
+                        };
+                    }
 
                     if (existingTicket != null && existingTicket.Status == TicketStatus.Cancelled)
                     {
-                       
                         existingTicket.Status = input.Action.ToLower() == "buy" ? TicketStatus.Sold : TicketStatus.Booked;
                         existingTicket.PassengerId = passenger.Id;
                         existingTicket.BoardingPoint = input.BoardingPoint;
                         existingTicket.DroppingPoint = input.DroppingPoint;
-                     
                     }
                     else
                     {
@@ -131,9 +164,11 @@ namespace BusTicketReservationSystem.Application.Services
                         SeatId = seat.Id,
                         SeatNumber = seat.SeatNumber,
                         Row = seat.Row,
-                        Status = seat.Status.ToString()
+                        Status = input.Action.ToLower() == "buy" ? "Sold" : "Booked"
                     });
                 }
+
+
 
                 await _uow.SaveChangesAsync();
                 await _uow.CommitAsync();
@@ -160,7 +195,6 @@ namespace BusTicketReservationSystem.Application.Services
 
             if (ticket.Status == TicketStatus.Booked || ticket.Status == TicketStatus.Sold)
             {
-                SeatStateService.Cancel(ticket.Seat);
                 ticket.Status = TicketStatus.Cancelled;
                 await _uow.SaveChangesAsync();
                 return new BookSeatResultDto { Success = true, Message = "Booking cancelled." };

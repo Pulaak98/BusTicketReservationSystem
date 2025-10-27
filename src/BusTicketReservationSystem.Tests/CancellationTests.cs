@@ -64,7 +64,6 @@ namespace BusTicketReservationSystem.Tests
             Assert.True(result.Success);
             Assert.Equal("Booking cancelled.", result.Message);
             Assert.Equal(TicketStatus.Cancelled, ticket.Status);
-            Assert.Equal(SeatStatus.Available, seat.Status);
         }
 
         [Fact]
@@ -110,7 +109,6 @@ namespace BusTicketReservationSystem.Tests
             Assert.True(result.Success);
             Assert.Equal("Booking cancelled.", result.Message);
             Assert.Equal(TicketStatus.Cancelled, ticket.Status);
-            Assert.Equal(SeatStatus.Available, seat.Status);
         }
 
 

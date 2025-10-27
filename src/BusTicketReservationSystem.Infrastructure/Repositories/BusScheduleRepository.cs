@@ -17,6 +17,7 @@ namespace BusTicketReservationSystem.Infrastructure.Repositories
 
         public Task<BusSchedule?> GetByIdAsync(Guid id) =>
             _db.BusSchedules
+                .Include(s => s.Tickets)
                .Include(x => x.Bus)
                .Include(x => x.Route)
                .FirstOrDefaultAsync(x => x.Id == id);

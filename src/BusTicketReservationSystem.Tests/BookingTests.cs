@@ -126,11 +126,18 @@ namespace BusTicketReservationSystem.Tests
 
             var schedule = new BusSchedule { Id = scheduleId, BusId = Guid.NewGuid(), Route = new Route() };
             var seat = new Seat(new SeatPosition("A1", 1)) { Id = seatId, BusId = schedule.BusId, Status = SeatStatus.Booked };
+            var ticket = new Ticket
+            {
+                Id = Guid.NewGuid(),
+                SeatId = seatId,
+                BusScheduleId = scheduleId,
+                Status = TicketStatus.Booked
+            };
 
             _mockScheduleRepo.Setup(r => r.GetByIdAsync(scheduleId)).ReturnsAsync(schedule);
             _mockSeatRepo.Setup(r => r.GetByIdsAsync(It.IsAny<List<Guid>>())).ReturnsAsync(new List<Seat> { seat });
             _mockPassengerRepo.Setup(r => r.FindByMobileAsync(input.PassengerMobile)).ReturnsAsync((Passenger)null);
-
+            _mockTicketRepo.Setup(r => r.FindBySeatAndScheduleAsync(seatId, scheduleId)).ReturnsAsync(ticket);
             // Act
             var result = await _bookingService.BookSeatAsync(input);
 
