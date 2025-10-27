@@ -34,7 +34,7 @@ this system enables users to search for buses, view seat layouts, and book or ca
 ### 1. Open the Solution
 
 - Open Visual Studio  
-- Go to **File > Open > Project/Solution**  
+- Go to **File > Open > Solution**  
 - Select `BusTicketReservationSystem.sln`  
 - Confirm the following projects are loaded in **Solution Explorer**:
   - `BusTicketReservationSystem.WebApi`  

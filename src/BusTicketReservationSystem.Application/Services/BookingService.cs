@@ -42,6 +42,10 @@ namespace BusTicketReservationSystem.Application.Services
                 return new SeatPlanDto { BusScheduleId = busScheduleId };
 
             var busSeats = await _seats.GetByBusIdAsync(schedule.BusId);
+            var bookedSeats = schedule.Tickets
+                                .Where(t => t.Status == TicketStatus.Booked || t.Status == TicketStatus.Sold)
+                                .Select(t => t.SeatId)
+                                .ToHashSet();
 
             return new SeatPlanDto
             {
@@ -55,8 +59,9 @@ namespace BusTicketReservationSystem.Application.Services
                     SeatId = s.Id,
                     SeatNumber = s.SeatNumber,
                     Row = s.Row,
-                    Status = s.Status.ToString()
+                    Status = bookedSeats.Contains(s.Id) ? "Booked" : "Available"
                 }).ToList()
+
             };
         }
 
