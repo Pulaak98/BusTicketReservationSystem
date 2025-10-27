@@ -148,6 +148,7 @@ this system enables users to search for buses, view seat layouts, and book or ca
   
     private baseUrl = 'https://localhost:7196/api'; // adjust to your backend port
 
+    Make sure your postgre database server is connected and runing 
 
 ### 6. Run the Project
 
@@ -162,7 +163,7 @@ this system enables users to search for buses, view seat layouts, and book or ca
         Open Swagger or landing page
 
         Open Angular app at http://localhost:4200
-
+        
 
 ### 7. Run Unit Tests
 

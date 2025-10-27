@@ -36,7 +36,7 @@ namespace BusTicketReservationSystem.Application.Services
                     BusId = bs.BusId,
                     BusName = bs.Bus.BusName,
                     CompanyName = bs.Bus.CompanyName,
-                    JourneyDate= journeyDateUtc.Date,
+                    JourneyDate= bs.JourneyDate,
                     StartTime = bs.StartTime,
                     ArrivalTime = bs.ArrivalTime,
                     SeatsLeft = seatsLeft,
